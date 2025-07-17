@@ -36,7 +36,7 @@ A modern, professional To-Do List web app to help you organize tasks, set priori
 
 ---
 
----
+```
 
 ## 📁 Project Structure
 
@@ -51,7 +51,7 @@ A modern, professional To-Do List web app to help you organize tasks, set priori
 │   └── script.js      # JS logic (if separated)
 ├── README.md          # Project documentation
 
----
+```
 
 ---
 
