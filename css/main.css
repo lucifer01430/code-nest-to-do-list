@@ -1,0 +1,67 @@
+
+    body {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e0e7ff 100%);
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    }
+    .container {
+      max-width: 700px;
+      margin-top: 40px;
+      background: #fff;
+      padding: 2.5rem 2rem;
+      border-radius: 18px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    }
+    .greeting {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: #3b82f6;
+    }
+    .task-input input, .task-input select, .task-input input[type="date"] {
+      border-radius: 10px;
+      margin-right: 8px;
+    }
+    .btn-primary, .btn-success, .btn-warning {
+      border-radius: 10px;
+      font-weight: 500;
+    }
+    .task-list li {
+      transition: box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.04);
+      margin-bottom: 8px;
+    }
+    .task-list li.completed .task-text {
+      text-decoration: line-through;
+      color: #6b7280;
+    }
+    .btn-delete, .btn-edit {
+      border: none;
+      background: transparent;
+      color: #dc3545;
+      font-size: 1.2rem;
+      margin-left: 6px;
+    }
+    .btn-edit {
+      color: #3b82f6;
+    }
+    .btn-edit:hover {
+      color: #2563eb;
+    }
+    .btn-delete:hover {
+      color: #a71d2a;
+    }
+    .badge-status {
+      font-size: 0.8rem;
+      background-color: #e0e7ff;
+      color: #374151;
+      margin-right: 8px;
+    }
+    .priority-low { background: #d1fae5; color: #065f46; }
+    .priority-medium { background: #fef3c7; color: #92400e; }
+    .priority-high { background: #fee2e2; color: #991b1b; }
+    .search-bar {
+      margin-bottom: 1rem;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      .greeting { font-size: 1.2rem; }
+    }

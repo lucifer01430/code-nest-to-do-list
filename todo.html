@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My To-Do List | CodeNest</title>
+  <meta name="description" content="A beautiful and professional To-Do app built with Bootstrap and local storage by Harsh Pandey.">
+  <meta name="keywords" content="to-do app, task manager, bootstrap todo, Harsh Pandey">
+  <meta name="author" content="Harsh Pandey">
+  <link rel="icon" href="logo.png" type="image/png" />
+
+  <!-- Bootstrap CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/main.css">
+      <!-- Favicon -->
+<link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
+<link rel="shortcut icon" href="favicon/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="To Do List" />
+<link rel="manifest" href="favicon/site.webmanifest" />
+</head>
+<body>
+  <div class="container">
+    <div class="text-center mb-4">
+      <img src="logo.png" alt="Logo" style="width: 60px;">
+      <p class="greeting mt-3">Hello, <span id="userNameDisplay"></span> 👋</p>
+      <p class="text-muted">Your professional To-Do list app</p>
+    </div>
+
+    <div class="search-bar input-group mb-3">
+      <input type="text" id="searchInput" class="form-control" placeholder="Search tasks..." oninput="renderTasks()">
+      <button class="btn btn-outline-secondary" onclick="clearSearch()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <form class="task-input input-group mb-4" onsubmit="addTask(event)">
+      <input type="text" id="taskInput" class="form-control" placeholder="Add a new task..." required>
+      <select id="priorityInput" class="form-select" style="max-width:110px;">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+      <input type="date" id="dueDateInput" class="form-control" style="max-width:140px;">
+      <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+
+    <ul id="taskList" class="list-group task-list mb-4"></ul>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-danger flex-fill" onclick="clearAll()">
+        <i class="fas fa-trash me-1"></i> Clear All Tasks
+      </button>
+      <button class="btn btn-outline-success flex-fill" onclick="markAllDone()">
+        <i class="fas fa-check-double me-1"></i> Mark All Done
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center mt-5 py-4 bg-light border-top">
+    <p class="mb-0 small text-secondary">
+      Designed & Developed with
+      <i class="fa fa-heart text-danger mx-1"></i>
+      by
+      <a href="https://lucifer01430.github.io/Portfolio/" target="_blank" rel="noopener" class="fw-semibold text-decoration-none text-dark link-hover">
+        Harsh Pandey
+      </a>
+    </p>
+  </footer>
+
+<script>
+      const user = localStorage.getItem("todoUser") || "Guest";
+    document.getElementById("userNameDisplay").innerText = user;
+    let tasks = JSON.parse(localStorage.getItem("todoTasks_" + user)) || [];
+    let editingIndex = null;
+
+    function saveTasks() {
+      localStorage.setItem("todoTasks_" + user, JSON.stringify(tasks));
+    }
+
+    function renderTasks() {
+      const list = document.getElementById("taskList");
+      const search = document.getElementById("searchInput").value.trim().toLowerCase();
+      list.innerHTML = "";
+      let filtered = tasks.filter(task =>
+        task.text.toLowerCase().includes(search)
+        || (task.priority && task.priority.toLowerCase().includes(search))
+        || (task.dueDate && task.dueDate.includes(search))
+      );
+      if (filtered.length === 0 && tasks.length > 0) {
+        list.innerHTML = `<li class='list-group-item text-center text-muted'>No tasks found.</li>`;
+        return;
+      }
+      filtered.forEach((task, index) => {
+        const li = document.createElement("li");
+        li.className = `list-group-item d-flex justify-content-between align-items-center ${task.done ? 'completed' : ''}`;
+        li.innerHTML = `
+          <div class="d-flex align-items-center flex-grow-1">
+            <span class="badge badge-status priority-${task.priority}">${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span>
+            <span class="task-text flex-grow-1" onclick="toggleTask(${getTaskIndex(task)})">${task.text}</span>
+            ${task.dueDate ? `<span class='ms-2 text-secondary small'><i class='fa fa-calendar'></i> ${task.dueDate}</span>` : ''}
+          </div>
+          <div>
+            <button class="btn-edit" onclick="editTask(${getTaskIndex(task)})" title="Edit"><i class="fas fa-pen"></i></button>
+            <button class="btn-delete" onclick="deleteTask(${getTaskIndex(task)})" title="Delete"><i class="fas fa-times"></i></button>
+          </div>
+        `;
+        list.appendChild(li);
+      });
+      saveTasks();
+    }
+
+    function getTaskIndex(task) {
+      return tasks.indexOf(task);
+    }
+
+setTimeout(() => {
+  console.log(
+    "%c✨ Designed and Developed by Harsh Pandey",
+    "color: #007bff; font-weight: bold; font-size: 16px;"
+  );
+  console.log(
+    "%c🔗 https://lucifer01430.github.io/Portfolio/",
+    "color: #28a745; font-size: 14px;"
+  );
+}, 2000);
+
+
+
+    function addTask(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById("taskInput");
+      const priority = document.getElementById("priorityInput").value;
+      const dueDate = document.getElementById("dueDateInput").value;
+      const value = input.value.trim();
+      if (!value) return alert("Please enter a task.");
+      if (editingIndex !== null) {
+        tasks[editingIndex].text = value;
+        tasks[editingIndex].priority = priority;
+        tasks[editingIndex].dueDate = dueDate;
+        editingIndex = null;
+      } else {
+        tasks.unshift({ text: value, done: false, priority, dueDate });
+      }
+      input.value = "";
+      document.getElementById("priorityInput").value = "low";
+      document.getElementById("dueDateInput").value = "";
+      renderTasks();
+    }
+
+    function editTask(index) {
+      const task = tasks[index];
+      document.getElementById("taskInput").value = task.text;
+      document.getElementById("priorityInput").value = task.priority || "low";
+      document.getElementById("dueDateInput").value = task.dueDate || "";
+      editingIndex = index;
+      document.getElementById("taskInput").focus();
+    }
+
+    function toggleTask(index) {
+      tasks[index].done = !tasks[index].done;
+      renderTasks();
+    }
+
+    function deleteTask(index) {
+      if (confirm("Delete this task?")) {
+        tasks.splice(index, 1);
+        renderTasks();
+      }
+    }
+
+    function clearAll() {
+      if (tasks.length === 0) return alert("No tasks to clear.");
+      if (confirm("Are you sure you want to clear all tasks?")) {
+        tasks = [];
+        renderTasks();
+      }
+    }
+
+    function markAllDone() {
+      if (tasks.length === 0) return alert("No tasks to mark done.");
+      tasks.forEach(t => t.done = true);
+      renderTasks();
+    }
+
+    function clearSearch() {
+      document.getElementById("searchInput").value = "";
+      renderTasks();
+    }
+
+    renderTasks();
+
+</script>
+</body>
+</html>
